@@ -1,0 +1,10 @@
+blog/
+  ├── index.html          # 首页
+  ├── posts.json         # 文章元数据
+  ├── css/
+  │   └── style.css      # 样式文件
+  ├── posts/             # Markdown文章目录
+  │   ├── post1.md
+  │   └── post2.md
+  └── templates/         # 页面模板
+      └── post.html      # 文章页面模板 

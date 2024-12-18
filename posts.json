@@ -1,0 +1,18 @@
+{
+  "posts": [
+    {
+      "id": "post1",
+      "title": "第一篇博客文章",
+      "date": "2024-03-20",
+      "summary": "这是第一篇博客文章的摘要...",
+      "path": "posts/posts1.md"
+    },
+    {
+      "id": "post2", 
+      "title": "关于",
+      "date": "2024-03-21",
+      "summary": "这是第二篇博客文章的摘要...",
+      "path": "posts/post2.md"
+    },
+  ]
+} 

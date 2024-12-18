@@ -1,0 +1,165 @@
+/* 全局样式 */
+body {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.7;
+    color: #2c3e50;
+    background: #fafafa;
+}
+
+/* 标题样式 */
+h1, h2, h3 {
+    line-height: 1.3;
+}
+
+h1 {
+    font-size: 2rem;
+    margin: 0 0 1rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+/* 导航栏 */
+header {
+    margin-bottom: 3rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #eee;
+}
+
+header h1 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+nav {
+    margin-top: 1rem;
+}
+
+nav a {
+    margin-right: 1.5rem;
+    color: #666;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: #000;
+}
+
+/* 文章列表 */
+.post-preview {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.post-preview:last-child {
+    border-bottom: none;
+}
+
+.post-preview h2 {
+    margin: 0 0 0.5rem;
+}
+
+.post-preview h2 a {
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+.post-preview h2 a:hover {
+    color: #0366d6;
+}
+
+.post-preview time {
+    display: block;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+}
+
+/* 关于页面样式 */
+.about-page {
+    max-width: 540px;
+    margin: 0 auto;
+}
+
+.profile {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    border: 3px solid #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.bio {
+    color: #666;
+    font-size: 1.1rem;
+    margin: 0.5rem 0 2rem;
+}
+
+.about-content {
+    margin-bottom: 3rem;
+}
+
+.about-content h3 {
+    margin: 2rem 0 1rem;
+    color: #2c3e50;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.social-links a {
+    color: #666;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.social-links a:hover {
+    background: #f8f9fa;
+    color: #000;
+}
+
+/* 页脚 */
+footer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 2px solid #eee;
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+    body {
+        padding: 1rem;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    .social-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+} 

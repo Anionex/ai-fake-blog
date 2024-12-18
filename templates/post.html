@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - 我的博客</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1><a href="/">我的博客</a></h1>
+        <nav>
+            <a href="/">首页</a>
+            <a href="/about.html">关于</a>
+        </nav>
+    </header>
+
+    <main>
+        <article class="post">
+            <time id="post-date"></time>
+            <div id="post-content" class="content">
+                <!-- Markdown内容将被注入到这里 -->
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 我的博客</p>
+    </footer>
+
+    <script>
+        // 从URL获取文章ID
+        const postId = new URLSearchParams(window.location.search).get('id');
+        
+        // 获取文章元数据和内容
+        async function loadPost() {
+            try {
+                // 获取文章元数据
+                const response = await fetch('../posts.json');
+                const data = await response.json();
+                const post = data.posts.find(p => p.id === postId);
+                
+                if (!post) {
+                    console.error('文章未找到:', postId);
+                    document.getElementById('post-content').innerHTML = '<p>文章未找到</p>';
+                    return;
+                }
+                
+                // 更新标题和日期
+                document.title = `${post.title} - 我的博客`;
+                document.getElementById('post-date').textContent = post.date;
+                
+                // 获取并渲染Markdown内容
+                const markdownResponse = await fetch(`../${post.path}`);
+                if (!markdownResponse.ok) {
+                    throw new Error(`HTTP error! status: ${markdownResponse.status}`);
+                }
+                const markdown = await markdownResponse.text();
+                
+                // 确保marked已定义
+                if (typeof marked === 'undefined') {
+                    throw new Error('marked.js未正确加载');
+                }
+                
+                const html = marked.parse(markdown);
+                document.getElementById('post-content').innerHTML = html;
+                
+            } catch (error) {
+                console.error('加载文章时出错:', error);
+                document.getElementById('post-content').innerHTML = `
+                    <p>加载文章时出错</p>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+        
+        loadPost();
+    </script>
+</body>
+</html> 
