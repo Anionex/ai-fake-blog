@@ -3,25 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}} - 我的博客</title>
+    <title>文章 - 我的博客</title>
     <link rel="stylesheet" href="../css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .post-content {
+            margin: 2rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .post-meta {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #0366d6;
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1><a href="/">我的博客</a></h1>
+        <h1>我的博客</h1>
         <nav>
-            <a href="/">首页</a>
-            <a href="/about.html">关于</a>
+            <div class="nav-links">
+                <a href="/">首页</a>
+                <a href="/about.html">关于</a>
+            </div>
+            <div class="search-container">
+                <form id="searchForm" onsubmit="handleSearch(event)">
+                    <input type="search" id="searchInput" placeholder="搜索文章...">
+                </form>
+            </div>
         </nav>
     </header>
 
     <main>
-        <article class="post">
-            <time id="post-date"></time>
-            <div id="post-content" class="content">
-                <!-- Markdown内容将被注入到这里 -->
-            </div>
+        <a href="/" class="back-link">← 返回首页</a>
+        <article id="post">
+            <!-- 文章内容将被动态插入 -->
         </article>
     </main>
 
@@ -30,49 +56,49 @@
     </footer>
 
     <script>
-        // 从URL获取文章ID
-        const postId = new URLSearchParams(window.location.search).get('id');
-        
-        // 获取文章元数据和内容
         async function loadPost() {
+            const params = new URLSearchParams(window.location.search);
+            const postId = params.get('id');
+            
+            if (!postId) {
+                document.getElementById('post').innerHTML = '<p>未找到文章</p>';
+                return;
+            }
+            
             try {
-                // 获取文章元数据
                 const response = await fetch('../posts.json');
                 const data = await response.json();
+                
                 const post = data.posts.find(p => p.id === postId);
                 
                 if (!post) {
-                    console.error('文章未找到:', postId);
-                    document.getElementById('post-content').innerHTML = '<p>文章未找到</p>';
+                    document.getElementById('post').innerHTML = '<p>未找到文章</p>';
                     return;
                 }
                 
-                // 更新标题和日期
                 document.title = `${post.title} - 我的博客`;
-                document.getElementById('post-date').textContent = post.date;
                 
-                // 获取并渲染Markdown内容
-                const markdownResponse = await fetch(`../${post.path}`);
-                if (!markdownResponse.ok) {
-                    throw new Error(`HTTP error! status: ${markdownResponse.status}`);
-                }
-                const markdown = await markdownResponse.text();
-                
-                // 确保marked已定义
-                if (typeof marked === 'undefined') {
-                    throw new Error('marked.js未正确加载');
-                }
-                
-                const html = marked.parse(markdown);
-                document.getElementById('post-content').innerHTML = html;
-                
-            } catch (error) {
-                console.error('加载文章时出错:', error);
-                document.getElementById('post-content').innerHTML = `
-                    <p>加载文章时出错</p>
-                    <pre>${error.message}</pre>
+                const postHTML = `
+                    <h1>${post.title}</h1>
+                    <div class="post-meta">
+                        <time>${post.date}</time>
+                    </div>
+                    <div class="post-content">
+                        ${post.content}
+                    </div>
                 `;
+                
+                document.getElementById('post').innerHTML = postHTML;
+            } catch (error) {
+                console.error('Error loading post:', error);
+                document.getElementById('post').innerHTML = '<p>加载文章时出错</p>';
             }
+        }
+        
+        function handleSearch(event) {
+            event.preventDefault();
+            const searchTerm = document.getElementById('searchInput').value;
+            window.location.href = `../search.html?q=${encodeURIComponent(searchTerm)}`;
         }
         
         loadPost();

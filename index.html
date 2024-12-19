@@ -10,8 +10,15 @@
     <header>
         <h1>我的博客</h1>
         <nav>
-            <a href="/">首页</a>
-            <a href="/about.html">关于</a>
+            <div class="nav-links">
+                <a href="/">首页</a>
+                <a href="/about.html">关于</a>
+            </div>
+            <div class="search-container">
+                <form id="searchForm" onsubmit="handleSearch(event)">
+                    <input type="search" id="searchInput" placeholder="搜索文章...">
+                </form>
+            </div>
         </nav>
     </header>
 
@@ -41,6 +48,12 @@
                 .join('');
             
             document.getElementById('posts').innerHTML = postsHTML;
+        }
+        
+        function handleSearch(event) {
+            event.preventDefault();
+            const searchTerm = document.getElementById('searchInput').value;
+            window.location.href = `search.html?q=${encodeURIComponent(searchTerm)}`;
         }
         
         loadPosts();

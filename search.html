@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索结果 - 我的博客</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .ai-result {
+            border: 2px solid #0366d6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 2rem;
+            background: #f8f9fa;
+        }
+        
+        .ai-result h2 a {
+            color: #0366d6;
+        }
+        
+        .ai-badge {
+            display: inline-block;
+            background: #0366d6;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>搜索结果</h1>
+        <nav>
+            <div class="nav-links">
+                <a href="/">首页</a>
+                <a href="/about.html">关于</a>
+            </div>
+            <div class="search-container">
+                <form id="searchForm" onsubmit="handleSearch(event)">
+                    <input type="search" id="searchInput" placeholder="搜索文章...">
+                </form>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div id="searchStats"></div>
+        <div id="searchResults" class="posts">
+            <!-- 搜索结果将被动态插入 -->
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 我的博客</p>
+    </footer>
+
+    <script>
+        async function loadSearchResults() {
+            const params = new URLSearchParams(window.location.search);
+            const searchTerm = params.get('q');
+            
+            if (!searchTerm) {
+                document.getElementById('searchStats').innerHTML = '请输入搜索关键词';
+                return;
+            }
+            
+            document.getElementById('searchInput').value = searchTerm;
+            
+            try {
+                const response = await fetch('posts.json');
+                const data = await response.json();
+                
+                const matchingPosts = data.posts.filter(post => 
+                    post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    post.summary.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                
+                let resultsHTML = matchingPosts
+                    .map(post => `
+                        <article class="post-preview">
+                            <h2><a href="templates/post.html?id=${post.id}">${post.title}</a></h2>
+                            <time>${post.date}</time>
+                            <p>${post.summary}</p>
+                        </article>
+                    `)
+                    .join('');
+                
+                // 检查是否是特殊搜索（以引号开头）
+                if (searchTerm.startsWith('"')) {
+                    const question = searchTerm.slice(1); // 移除开头的引号
+                    resultsHTML += `
+                        <article class="post-preview ai-result">
+                            <h2>
+                                <a href="templates/ai-answer.html?q=${encodeURIComponent(question)}">
+                                    ${question}
+                                </a>
+                                <span class="ai-badge">AI回答</span>
+                            </h2>
+                            <p>点击查看AI对这个问题的回答</p>
+                        </article>
+                    `;
+                }
+                
+                document.getElementById('searchStats').innerHTML = 
+                    `找到 ${matchingPosts.length + (searchTerm.startsWith('"') ? 1 : 0)} 个结果，关键词："${searchTerm}"`;
+                
+                document.getElementById('searchResults').innerHTML = 
+                    resultsHTML || '<p>没有找到匹配的文章</p>';
+            } catch (error) {
+                console.error('Error loading search results:', error);
+                document.getElementById('searchResults').innerHTML = 
+                    '<p>加载搜索结果时出错</p>';
+            }
+        }
+        
+        function handleSearch(event) {
+            event.preventDefault();
+            const searchTerm = document.getElementById('searchInput').value;
+            window.location.href = `search.html?q=${encodeURIComponent(searchTerm)}`;
+        }
+        
+        loadSearchResults();
+    </script>
+</body>
+</html> 
