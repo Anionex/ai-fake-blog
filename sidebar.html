@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>侧边栏</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: transparent;
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        body::-webkit-scrollbar-thumb {
+            background-color: #ddd;
+            border-radius: 3px;
+        }
+
+        .sidebar-posts {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .post-card {
+            padding: 0.8rem;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            background: #fff;
+        }
+
+        .post-card:hover {
+            border-color: #0366d6;
+            background: #f8f9fa;
+            transform: translateX(2px);
+        }
+
+        .post-card h3 {
+            margin: 0 0 0.4rem 0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .post-card a {
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .post-card a:hover {
+            color: #0366d6;
+        }
+
+        .post-card p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <h3>🔥最新文章</h3>
+    <div class="sidebar-posts">
+        <!-- 文章列表将被动态插入 -->
+    </div>
+
+    <script>
+        async function loadPosts() {
+            try {
+                const response = await fetch('../posts.json');
+                const data = await response.json();
+                
+                const postsHTML = data.posts
+                    .map(post => `
+                        <div class="post-card">
+                            <h3>
+                                <a href="templates/post.html?id=${post.id}" target="_parent">
+                                    ${post.title}
+                                </a>
+                            </h3>
+                            <p>${post.summary}</p>
+                        </div>
+                    `)
+                    .join('');
+                
+                document.querySelector('.sidebar-posts').innerHTML = postsHTML;
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                document.querySelector('.sidebar-posts').innerHTML = 
+                    '<p>加载文章列表时出错</p>';
+            }
+        }
+        
+        loadPosts();
+    </script>
+</body>
+</html> 
