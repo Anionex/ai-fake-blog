@@ -2,24 +2,24 @@
   "posts": [
     {
       "id": "1",
-      "title": "Python编程入门：从零开始学习Python",
+      "title": "对于pip和requirements.txt的一些实验——为什么我的requirements.txt安装会冲突？",
       "date": "2024-01-19",
-      "summary": "本文将带你了解Python编程的基础知识，包括变量、数据类型、控制流程等核心概念。适合编程新手阅读。",
-      "content": "Python是一门优雅、简单且功能强大的编程语言。本文将从基础开始，带你了解Python的核心概念和编程思维。"
+      "summary": "对于pip和requirements.txt的一些实验——为什么我的requirements.txt安装会冲突？",
+      "content": "# 对于pip和requirements.txt的一些实验——为什么我的requirements.txt安装会冲突？<br><br>python项目协同开发，配置环境都是一个很痛头的事情。在我的电脑上能跑，但是到了别人那就run不起来，导致大部分时间都在和环境配置斗智斗勇，非常得不偿失。<br><br>一种常见的情况是pip导出的requirements到一个同样的平台上重装却会发现conflits，网上搜索发现这个问题鲜有答案（或者是我眼力不好），于是记录下自己的实验和思考。<br><br>## 实验<br><br>环境：vscode 系列编辑器内置powershell + miniconda环境<br><br>在项目[Anionex/ItineraryAgent: Use LLMs based agents to generate itinerary | 使用基于大语言模型的智能体定制旅游行程](https://github.com/Anionex/ItineraryAgent)上进行实验<br><br>实验1：原版freeze得出依赖直装<br><br>```sh<br>pip freeze > requirements.txt<br>conda create -n tmp1 python=3.9 -y<br>conda activate tmp1<br>pip install -r requirements.txt<br>python planner_checker_system.py<br>```<br><br>![image-shkk.png](/upload/image-shkk.png)<br><br>![image-wcud.png](/upload/image-wcud.png)<br><br>实验结果：依赖冲突。<br>**具体冲突来源：**<br><br>- 来自 `langchain-google-genai 0.0.4`，它要求的 `langchain-core` 版本是 `>=0.1` 且 `<0.2`，这与 `langchain-core==0.2.34` 冲突。因为它需要的版本范围低于 `0.2`，而req指定的 `langchain-core` 版本是 `0.2.34`。<br>  **我们期望pip freeze导出一个互不冲突的依赖解决方案，但是它却辜负了我们的期望**，这是为什么？<br><br>实验2：freeze去掉版本限制<br><br>```sh<br>pip freeze | ForEach-Object { $_ -replace '==.*', '' } > requirements.txt<br>conda create -n tmp2 python=3.9 -y<br>conda activate tmp2<br>pip install -r requirements.txt<br>python planner_checker_system.py<br>```<br><br>![image-hmvq.png](/upload/image-hmvq.png)<br><br>实验结果：去掉版本限制后可以装上。<br><br>实验3：使用pip-chill工具，不限制版本<br>这个工具只会记录你手动安装的包。<br><br>```sh<br>pip install pip-chill<br>pip-chill --no-version > requirements.txt<br>conda create -n tmp3 python=3.9 -y<br>conda activate tmp3<br>pip install -r requirements.txt<br>python planner_checker_system.py<br>```<br><br>![image-iynt.png](/upload/image-iynt.png)<br><br>实验结果：pass<br><br>实验4：使用pip-chill工具，限制版本<br><br>```sh<br>pip install pip-chill<br>pip-chill > requirements.txt<br>conda create -n tmp4 python=3.9 -y<br>conda activate tmp4<br>pip install -r requirements.txt<br>python planner_checker_system.py<br>```<br><br>![image-exxj.png](/upload/image-exxj.png)<br><br>实验结果：依赖冲突。<br>还是那个核心的冲突，langchain-google-genai 和 langchain-core的冲突。"
     },
     {
       "id": "2",
-      "title": "人工智能与机器学习简介",
+      "title": "MiniCPM-V2.6本地部署教程（附windows N卡一键部署整合包）",
       "date": "2024-01-18",
-      "summary": "探索人工智能和机器学习的基本概念，了解这些技术如何改变我们的生活和工作方式。",
-      "content": "人工智能和机器学习正在改变世界。从自动驾驶汽车到智能助手，AI技术无处不在。让我们一起探索这个激动人心的领域。"
+      "summary": "暂无描述",
+      "content": "# MiniCPM-V2.6本地部署教程（附windows N卡一键部署整合包）<br><br>## 简介：<br><br>MiniCPM-V是面壁智能发布的文字-图像多模态大模型系列。它支持文本和图像输入，并提供文本输出。<br><br>**MiniCPM-V 2.6是** MiniCPM-V系列的最新、性能最佳模型。总参数量 8B，单图、多图和视频理解性能**超越了 GPT-4V**。在单图理解上，它取得了优于 **GPT-4o mini、Gemini 1.5 Pro 和 Claude 3.5 Sonnet**等商用闭源模型的表现。<br><br>更牛逼的是，由于参数量小、token密度大，MiniCPM-V 2.6 成为了**首个**支持在 iPad 等端侧设备上进行实时视频理解的多模态大模型。托模型的福，**我们可以在手机、平板、笔记本电脑上部署并体验它的强大能力。**<br><br>原项目地址：https://github.com/OpenBMB/MiniCPM-V/<br><br>**使用场景**<br><br>1. 文字OCR提取（特别是含复杂公式、图标的）<br>2. 看图识别物体，再也不用问别人了<br>3. 视频理解和总结<br>4. 更多用途欢迎评论区指出<br><br>## 使用效果<br><br>不会调整自行车座椅？给它拍张图就能搞定，复杂的说明书也能看懂。<br><br>![image-ojvx.png](/upload/image-ojvx.png)<br><br>也能正确识别照片中cos的角色并给出原因。<br><br>![image-uyte.png](/upload/image-uyte.png)<br><br>## 一键部署包<br><br>UP为windowsN卡用户打包好了一键部署整合包，不用关注公众号，不用三连加关注，点击网盘链接即可下载，下载解压后双击.bat文件就能使用，链接会挂在评论区<br><br>如果下载速度过慢，也可以UP的工具交流q群下载。<br><br>## 自己动手<br><br>1. 克隆仓库并跳转到相应目录<br><br>```<br>git clone https://github.com/OpenBMB/MiniCPM-V.git<br>cd MiniCPM-V<br>```<br><br>2. 安装依赖<br>   将requirements.txt的内容手动改为如下内容，可以在大部分windows机器安装成功，非windows机器无需修改（大概）：<br>   ```<br>   --extra-index-url https://download.pytorch.org/whl/cu118<br>   packaging==23.2<br>   addict==2.4.0<br>   editdistance==0.6.2<br>   einops==0.7.0<br>   fairscale==0.4.0<br>   jsonlines==4.0.0<br>   markdown2==2.4.10<br>   matplotlib==3.7.4<br>   more_itertools==10.1.0<br>   nltk==3.8.1<br>   numpy==1.24.4<br>   opencv_python_headless==4.5.5.64<br>   openpyxl==3.1.2<br>   Pillow==10.1.0<br>   sacrebleu==2.3.2<br>   seaborn==0.13.0<br>   shortuuid==1.0.11<br>   spacy==3.7.2<br>   timm==0.9.10<br>   torch==2.1.2+cu118<br>   torchvision==0.16.2<br>   tqdm==4.66.1<br>   protobuf==4.25.0<br>   transformers==4.40.0<br>   typing_extensions==4.8.0<br>   uvicorn==0.24.0.post1<br>   #xformers==0.0.22.post7<br>   flash_attn==1.0.4<br>   sentencepiece==0.1.99<br>   accelerate==0.30.1<br>   socksio==1.0.0<br>   gradio<br>   gradio_client<br>   http://thunlp.oss-cn-qingdao.aliyuncs.com/multi_modal/never_delete/modelscope_studio-0.4.0.9-py3-none-any.whl<br>   decord<br>   ```<br><br>然后运行指令安装依赖<br><br>```shell<br>pip install -r requirements.txt<br>```<br><br>3. 运行demo<br>   对于 NVIDIA GPU，请运行：<br><br>```<br>python web_demo_2.6.py --device cuda<br>```<br><br>对于 `Apple silicon 或AMD GPUs`<br>运行<br><br>```<br>python web_demo_2.6.py --device mps<br>```<br><br>**常见问题**<br><br>1. 识别效果不是很好？<br>   1. 可以更换一种编码模式。左边“Decode Type”切换到另一个选项，再点击“Regenerate”重试<br>   2. 可以调整输入，比如在问句后面问一句“为什么？”，会提供精确度。<br><br>**写在最后**<br><br>如果有用，欢迎点赞/投币<br><br>如果有其他需求，欢迎在评论区提出😁<br><br>博主是个喜欢编程的萌新UP，以后时不时分享一些使用工具的部署教程，或者打包一些好用的应用给朋友们，现在关注，以后就是老粉了（doge"
     },
     {
       "id": "3",
-      "title": "Web开发最佳实践指南",
+      "title": "python虚拟环境venv使用教程（简洁版）",
       "date": "2024-01-17",
-      "summary": "分享Web开发中的重要原则和最佳实践，帮助你构建更好的网站和应用程序。",
-      "content": "优秀的Web开发需要遵循一些核心原则和最佳实践。本文将分享这些关键知识，帮助你成为更好的开发者。"
+      "summary": "安装venv",
+      "content":"<br><br>1. 安装venv<br><br>python3.6及以上已经默认安装，python3.5需要通过系统的包管理工具安装，例如在Ubuntu上，可以这么安装:<br><br>sudo apt install python3-venv<br><br>2. 创建虚拟环境<br><br>当前目录<br><br>python3 -m venv .\\<br><br>默认创建一个和当前文件夹名称相同的虚拟环境<br><br>python3 -m venv myvenv # 这样可以创建别的名字<br><br>3. 启用虚拟环境<br><br>在Linux和Mac下<br><br>source ./bin/activate<br><br>在Windows下<br><br>.\\Scripts\\Activate.ps1<br><br>4. 安装包<br><br>虚拟环境启用后，可直接使用pip 安装包<br><br>pip install torch<br><br>相关链接：<br><br>pip调用后报错fatal error暴力解决方案 - Anion's Blog (web-of-anion.top)<br><br><br><br>5. 退出虚拟环境<br><br>deactivate<br><br><br><br>常见问题<br><br>想重命名项目文件夹or移动虚拟环境在系统中的路径<br><br>如果直接重命名或者移动，再次激活虚拟环境就会出现问题。因为虚拟环境配置中有当前文件夹所在的路径。<br><br>一种基础的办法是直接删除原来虚拟环境的所有文件，然后重新配置虚拟环境和安包<br><br>而以下方案在windows被验证有效，可以免除一些路径问题并且保留原来的packages文件，省去重新安装<br><br><br><br><br><br>删除python.exe所在的文件夹，比如`Scripts`<br><br><br><br>备份site-packages文件夹<br><br><br><br>改文件夹名称<br><br><br><br>新建虚拟环境<br><br><br><br>把备份的site-packages放回来<br><br>"
     }
   ]
 } 
