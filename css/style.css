@@ -14,8 +14,8 @@ body {
     height: 80vh;
     border: none;
     position: fixed;
-    right: calc(50% + 380px);
-    top: 2rem;
+    right: calc(50% + 400px);
+    top: 7rem;
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
