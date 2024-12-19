@@ -7,31 +7,34 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header>
-        <h1>搜索结果</h1>
-        <nav>
-            <div class="nav-links">
-                <a href="/">首页</a>
-                <a href="/about.html">关于</a>
-            </div>
-            <div class="search-container">
-                <form id="searchForm" onsubmit="handleSearch(event)">
-                    <input type="search" id="searchInput" placeholder="搜索文章...">
-                </form>
-            </div>
-        </nav>
-    </header>
+    <iframe src="sidebar.html" class="sidebar-iframe"></iframe>
+    <div class="main-content">
+        <header>
+            <h1>搜索结果</h1>
+            <nav>
+                <div class="nav-links">
+                    <a href="/">首页</a>
+                    <a href="/about.html">关于</a>
+                </div>
+                <div class="search-container">
+                    <form id="searchForm" onsubmit="handleSearch(event)">
+                        <input type="search" id="searchInput" placeholder="搜索文章...">
+                    </form>
+                </div>
+            </nav>
+        </header>
 
-    <main>
-        <div id="searchStats"></div>
-        <div id="searchResults" class="posts">
-            <!-- 搜索结果将被动态插入 -->
-        </div>
-    </main>
+        <main>
+            <div id="searchStats"></div>
+            <div id="searchResults" class="posts">
+                <!-- 搜索结果将被动态插入 -->
+            </div>
+        </main>
 
-    <footer>
-        <p>&copy; 2024 我的博客</p>
-    </footer>
+        <footer>
+            <p>&copy; 2024 我的博客</p>
+        </footer>
+    </div>
 
     <script>
         async function loadSearchResults() {

@@ -29,31 +29,34 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>我的博客</h1>
-        <nav>
-            <div class="nav-links">
-                <a href="/">首页</a>
-                <a href="/about.html">关于</a>
-            </div>
-            <div class="search-container">
-                <form id="searchForm" onsubmit="handleSearch(event)">
-                    <input type="search" id="searchInput" placeholder="搜索文章...">
-                </form>
-            </div>
-        </nav>
-    </header>
+    <iframe src="../sidebar.html" class="sidebar-iframe"></iframe>
+    <div class="main-content">
+        <header>
+            <h1>我的博客</h1>
+            <nav>
+                <div class="nav-links">
+                    <a href="/">首页</a>
+                    <a href="/about.html">关于</a>
+                </div>
+                <div class="search-container">
+                    <form id="searchForm" onsubmit="handleSearch(event)">
+                        <input type="search" id="searchInput" placeholder="搜索文章...">
+                    </form>
+                </div>
+            </nav>
+        </header>
 
-    <main>
-        <a href="/" class="back-link">← 返回首页</a>
-        <article id="post">
-            <!-- 文章内容将被动态插入 -->
-        </article>
-    </main>
+        <main>
+            <a href="/" class="back-link">← 返回首页</a>
+            <article id="post">
+                <!-- 文章内容将被动态插入 -->
+            </article>
+        </main>
 
-    <footer>
-        <p>&copy; 2024 我的博客</p>
-    </footer>
+        <footer>
+            <p>&copy; 2024 我的博客</p>
+        </footer>
+    </div>
 
     <script>
         async function loadPost() {

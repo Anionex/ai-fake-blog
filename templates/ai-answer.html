@@ -18,24 +18,10 @@
         }
         
         .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            text-align: center;
             padding: 2rem;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #e0851c;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            color: #666;
+            font-size: 1.1rem;
         }
         
         .error-message {
@@ -97,31 +83,34 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>我的博客</h1>
-        <nav>
-            <div class="nav-links">
-                <a href="/">首页</a>
-                <a href="/about.html">关于</a>
-            </div>
-            <div class="search-container">
-                <form id="searchForm" onsubmit="handleSearch(event)">
-                    <input type="search" id="searchInput" placeholder="搜索文章...">
-                </form>
-            </div>
-        </nav>
-    </header>
+    <iframe src="../sidebar.html" class="sidebar-iframe"></iframe>
+    <div class="main-content">
+        <header>
+            <h1>我的博客</h1>
+            <nav>
+                <div class="nav-links">
+                    <a href="/">首页</a>
+                    <a href="/about.html">关于</a>
+                </div>
+                <div class="search-container">
+                    <form id="searchForm" onsubmit="handleSearch(event)">
+                        <input type="search" id="searchInput" placeholder="搜索文章...">
+                    </form>
+                </div>
+            </nav>
+        </header>
 
-    <main>
-        <a href="/" class="back-link">← 返回首页</a>
-        <article id="post">
-            <!-- AI回答将被动态插入 -->
-        </article>
-    </main>
+        <main>
+            <a href="/" class="back-link">← 返回首页</a>
+            <article id="post">
+                <!-- AI回答将被动态插入 -->
+            </article>
+        </main>
 
-    <footer>
-        <p>&copy; 2024 我的博客</p>
-    </footer>
+        <footer>
+            <p>&copy; 2024 我的博客</p>
+        </footer>
+    </div>
 
     <script>
         const API_KEY = 'sk-Opz25zl4iSRoXnwF87350eC7E5B9494bA3BfFfF4243c4331';
@@ -156,7 +145,7 @@
         };
         
         async function getAIAnswer(question) {
-            document.getElementById('post').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            document.getElementById('post').innerHTML = '<div class="loading">暂无内容</div>';
             
             try {
                 const response = await fetch(`${BASE_URL}/v1/chat/completions`, {
@@ -174,7 +163,8 @@
                             },
                             {
                                 role: 'user',
-                                content: `使用C++编写程序。要求：(1)不要使用STL库，而是手写一切实现（2）使用struct而不是class来封装数据结构。（3）使用中文注释。编写内容是： ` + question
+                                content: `使用C++编写程序。要求：(1)不要使用STL库，而是手写一切实现（2）使用struct而不是class来封装数据结构。（3）使用中文注释。编写内容是： ` + question + `
+                                假装你在写一篇博客，除了刚才提到的代码，还可以有一些代码片段和概念、解释等。但是不要太长。不要回应我"好的"，不要输出其他内容。`
                             }
                         ],
                         temperature: 0.7

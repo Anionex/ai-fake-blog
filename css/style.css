@@ -9,6 +9,28 @@ body {
     background: #fafafa;
 }
 
+.sidebar-iframe {
+    width: 280px;
+    height: 80vh;
+    border: none;
+    position: fixed;
+    right: calc(50% + 380px);
+    top: 2rem;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.sidebar-iframe:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.main-content {
+    width: 100%;
+}
+
 /* 标题样式 */
 h1, h2, h3 {
     line-height: 1.3;
