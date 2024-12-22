@@ -113,11 +113,22 @@
     </div>
 
     <script>
-        const API_KEY = 'sk-Opz25zl4iSRoXnwF87350eC7E5B9494bA3BfFfF4243c4331';
+        let API_KEY = localStorage.getItem('api_key') || '<your_api_key>';
         const BASE_URL = 'https://chatapi.onechats.top';
         const MAX_RETRIES = 3;  // 最大重试次数
         const RETRY_DELAY = 1000;  // 重试延迟（毫秒）
         
+        // 检查并获取API key
+        function checkApiKey() {
+            if (API_KEY === '<your_api_key>') {
+                const key = prompt('请输入您的API Key:');
+                if (key) {
+                    API_KEY = key;
+                    localStorage.setItem('api_key', key);
+                }
+            }
+        }
+
         // 等待指定时间
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
@@ -143,6 +154,9 @@
         
         // 等待页面加载完成后初始化
         window.onload = function() {
+            // 检查API key
+            checkApiKey();
+            
             // 初始化 highlight.js
             hljs.configure({
                 ignoreUnescapedHTML: true
@@ -170,6 +184,12 @@
         };
         
         async function getAIAnswer(question) {
+            // 再次检查API key,以防用户取消了输入
+            if (API_KEY === '<your_api_key>') {
+                document.getElementById('post').innerHTML = '<div class="error-message">请先设置API Key</div>';
+                return;
+            }
+            
             document.getElementById('post').innerHTML = '<div class="loading">暂无内容</div>';
             
             try {

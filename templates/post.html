@@ -151,6 +151,13 @@
                 }
                 
                 document.title = `${post.title} - 我的博客`;
+
+                // 加载markdown文件
+                const markdownResponse = await fetch(`../${post.path}`);
+                if (!markdownResponse.ok) {
+                    throw new Error('无法加载文章内容');
+                }
+                const markdownContent = await markdownResponse.text();
                 
                 const postHTML = `
                     <h1>${post.title}</h1>
@@ -158,7 +165,7 @@
                         <time>${post.date}</time>
                     </div>
                     <div class="post-content markdown-body">
-                        ${marked.parse(post.content || '暂无内容')}
+                        ${marked.parse(markdownContent)}
                     </div>
                 `;
                 

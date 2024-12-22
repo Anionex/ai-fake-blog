@@ -28,6 +28,9 @@
             <div id="posts" class="posts">
                 <!-- 文章列表将被动态插入 -->
             </div>
+            <div id="pagination" class="pagination">
+                <!-- 分页控件将被动态插入 -->
+            </div>
         </main>
 
         <footer>
@@ -36,11 +39,32 @@
     </div>
 
     <script>
+        const POSTS_PER_PAGE = 5; // 每页显示的文章数
+        let currentPage = 1;
+        let totalPosts = 0;
+        let allPosts = [];
+
         async function loadPosts() {
-            const response = await fetch('posts.json');
-            const data = await response.json();
+            try {
+                const response = await fetch('posts.json');
+                const data = await response.json();
+                allPosts = data.posts;
+                totalPosts = allPosts.length;
+                
+                displayCurrentPage();
+                updatePagination();
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                document.getElementById('posts').innerHTML = '<p>加载文章列表时出错</p>';
+            }
+        }
+
+        function displayCurrentPage() {
+            const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+            const endIndex = Math.min(startIndex + POSTS_PER_PAGE, totalPosts);
+            const currentPosts = allPosts.slice(startIndex, endIndex);
             
-            const postsHTML = data.posts
+            const postsHTML = currentPosts
                 .map(post => `
                     <article class="post-preview">
                         <h2><a href="templates/post.html?id=${post.id}">${post.title}</a></h2>
@@ -52,6 +76,52 @@
             
             document.getElementById('posts').innerHTML = postsHTML;
         }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
+            let paginationHTML = '';
+
+            // 上一页按钮
+            if (currentPage > 1) {
+                paginationHTML += `<button onclick="changePage(${currentPage - 1})">上一页</button>`;
+            }
+
+            // 页码按钮
+            for (let i = 1; i <= totalPages; i++) {
+                if (
+                    i === 1 || // 第一页
+                    i === totalPages || // 最后一页
+                    (i >= currentPage - 1 && i <= currentPage + 1) // 当前页附近的页码
+                ) {
+                    paginationHTML += `
+                        <button 
+                            onclick="changePage(${i})"
+                            class="${i === currentPage ? 'current' : ''}"
+                        >${i}</button>
+                    `;
+                } else if (
+                    i === currentPage - 2 ||
+                    i === currentPage + 2
+                ) {
+                    paginationHTML += '<span>...</span>';
+                }
+            }
+
+            // 下一页按钮
+            if (currentPage < totalPages) {
+                paginationHTML += `<button onclick="changePage(${currentPage + 1})">下一页</button>`;
+            }
+
+            document.getElementById('pagination').innerHTML = paginationHTML;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            displayCurrentPage();
+            updatePagination();
+            // 滚动到页面顶部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
         
         function handleSearch(event) {
             event.preventDefault();
@@ -61,5 +131,39 @@
         
         loadPosts();
     </script>
+
+    <style>
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+        }
+
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .pagination button:hover {
+            background: #f5f5f5;
+            border-color: #ccc;
+        }
+
+        .pagination button.current {
+            background: #0366d6;
+            color: white;
+            border-color: #0366d6;
+        }
+
+        .pagination span {
+            padding: 0.5rem;
+            color: #666;
+        }
+    </style>
 </body>
 </html> 

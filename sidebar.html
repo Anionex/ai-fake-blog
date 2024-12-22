@@ -82,12 +82,17 @@
     </div>
 
     <script>
+        const RECENT_POSTS_COUNT = 5; // 显示最新的5篇文章
+
         async function loadPosts() {
             try {
                 const response = await fetch('../posts.json');
                 const data = await response.json();
                 
-                const postsHTML = data.posts
+                // 只取最新的几篇文章
+                const recentPosts = data.posts.slice(0, RECENT_POSTS_COUNT);
+                
+                const postsHTML = recentPosts
                     .map(post => `
                         <div class="post-card">
                             <h3>
