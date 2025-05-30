@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的博客</title>
+    <title>WF_flow的博客</title>
     <link rel="stylesheet" href="../css/style.css">
     <!-- 先加载 highlight.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
@@ -80,13 +80,43 @@
         .markdown-body table tr:nth-child(2n) {
             background-color: #f6f8fa;
         }
+        
+        /* 代码块复制按钮样式 */
+        .code-block-container {
+            position: relative;
+        }
+        
+        .copy-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 3px 8px;
+            font-size: 12px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        
+        .copy-button:hover {
+            opacity: 1;
+            background-color: #e0e0e0;
+        }
+        
+        .copy-button.copied {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
     </style>
 </head>
 <body>
     <iframe src="../sidebar.html" class="sidebar-iframe"></iframe>
     <div class="main-content">
         <header>
-            <h1>我的博客</h1>
+            <h1>WF_flow的博客</h1>
             <nav>
                 <div class="nav-links">
                     <a href="/">首页</a>
@@ -108,20 +138,20 @@
         </main>
 
         <footer>
-            <p>&copy; 2024 我的博客</p>
+            <p>&copy; 2024 WF_flow的博客</p>
         </footer>
     </div>
 
     <script>
         let API_KEY = localStorage.getItem('api_key') || '<your_api_key>';
-        const BASE_URL = 'https://chatapi.onechats.top';
+        const BASE_URL = 'https://oneapi.web-of-anion.top';
         const MAX_RETRIES = 3;  // 最大重试次数
         const RETRY_DELAY = 1000;  // 重试延迟（毫秒）
         
         // 检查并获取API key
         function checkApiKey() {
             if (API_KEY === '<your_api_key>') {
-                const key = prompt('请输入您的API Key:');
+                const key = "sk-123";
                 if (key) {
                     API_KEY = key;
                     localStorage.setItem('api_key', key);
@@ -208,7 +238,56 @@
                             },
                             {
                                 role: 'user',
-                                content: `使用C++编写程序。要求：(1)不要使用STL库，而是手写一切实现（2）使用struct而不是class来封装数据结构。（3）使用中文注释。编写内容是： ` + question + `
+                                content: `使用8086汇编TASM编写程序。你精通TASM风格的8086汇编语言，你的任务是根据要求，编写对应的汇编程序代码。
+
+### **TASM 风格特征**
+请你遵守此风格来编写代码：
+1. **段定义与 ASSUME 指令**  
+   - 使用 SEGMENT/ENDS 定义段（如 CODE SEGMENT 和 CODE ENDS）。  
+   - 使用 ASSUME 明确段寄存器与段的关联（如 ASSUME CS:CODE, DS:DATA, SS:STACK1）。  
+   - **区别**：MASM 也支持类似语法，但 TASM 更严格地依赖 ASSUME 指令。
+
+2. **数据段与变量定义**  
+   - 代码中隐含了 DATA SEGMENT 和 STACK1 SEGMENT 的定义
+   - **TASM 风格**：数据段通常通过 DB, DW, DD 等伪指令定义（如 TXTBUF, STRING, CUNT, INDEX 应在 DATA SEGMENT 中定义）。
+
+3. **指令与操作数顺序**  
+   - 指令格式为 MOV AX, DATA（目标在前，源在后），符合 Intel 语法
+   - 使用 REPNE SCASB 等字符串操作指令，这是 x86 汇编的通用语法，但 TASM 对其支持更贴近经典用法。
+
+4. **寄存器与标志位操作**  
+   - 使用 CLD 清除方向标志（DF=0），使字符串操作递增。  
+   - 使用 ZF（零标志）判断查找结果（JNE END0 表示未找到时跳转）。  
+   - **TASM 风格**：对标志位的操作更直接，依赖经典 x86 指令集。
+
+5. **程序入口与退出**  
+   - 使用 END START 指定程序入口（START 为标号）。  
+   - 使用 INT 21H 退出程序（AH=4CH），这是 DOS 下的标准做法。
+6. 尽量少用子程序，除非有大段的程序复用需求
+
+示范：
+\`\`\`asm
+data segment
+    s      dw 0      ; 累加结果
+    n      dw 1      ; 当前项的n值
+    t      dw 0      ; 暂存 n*(n+1)
+    msg    db 'sum: $'
+    newln  db 13,10,'$'
+data ends
+
+stack1 segment stack
+    dw 128 dup(0)
+stack1 ends
+
+code segment
+assume cs:code, ds:data, ss:stack1
+
+start:
+...
+
+code ends
+end start
+\`\`\`问题：${question}
                                 假装你在写一篇博客，除了刚才提到的代码，还可以有一些代码片段和概念、解释等。但是不要太长。不要回应我"好的"，不要输出其他内容。`
                             }
                         ],
@@ -225,7 +304,6 @@
                 const today = new Date().toISOString().split('T')[0];
                 
                 document.getElementById('post').innerHTML = `
-                    <h1>${question}</h1>
                     <time>${today}</time>
                     <div class="post-content markdown-body">${marked.parse(answer)}</div>
                 `;
@@ -234,6 +312,9 @@
                 document.querySelectorAll('pre code').forEach((block) => {
                     hljs.highlightElement(block);
                 });
+                
+                // 为所有代码块添加复制按钮
+                addCopyButtonsToCodeBlocks();
             } catch (error) {
                 console.error('Error:', error);
                 document.getElementById('post').innerHTML = `
@@ -259,8 +340,46 @@
                 return;
             }
             
-            document.title = `${question} - 我的博客`;
+            document.title = ` - WF_flow的博客`;
             getAIAnswer(question);
+        }
+        
+        // 为代码块添加复制按钮
+        function addCopyButtonsToCodeBlocks() {
+            document.querySelectorAll('pre').forEach((pre) => {
+                // 创建容器包裹pre元素
+                const container = document.createElement('div');
+                container.className = 'code-block-container';
+                pre.parentNode.insertBefore(container, pre);
+                container.appendChild(pre);
+                
+                // 创建复制按钮
+                const copyButton = document.createElement('button');
+                copyButton.className = 'copy-button';
+                copyButton.textContent = '复制';
+                container.appendChild(copyButton);
+                
+                // 添加点击事件
+                copyButton.addEventListener('click', () => {
+                    const code = pre.querySelector('code').innerText;
+                    navigator.clipboard.writeText(code).then(() => {
+                        copyButton.textContent = '已复制!';
+                        copyButton.classList.add('copied');
+                        
+                        setTimeout(() => {
+                            copyButton.textContent = '复制';
+                            copyButton.classList.remove('copied');
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('复制失败:', err);
+                        copyButton.textContent = '复制失败';
+                        
+                        setTimeout(() => {
+                            copyButton.textContent = '复制';
+                        }, 2000);
+                    });
+                });
+            });
         }
     </script>
 </body>
